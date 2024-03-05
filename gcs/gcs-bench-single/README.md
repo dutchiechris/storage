@@ -30,7 +30,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
 1. Create a VM (consider network limits for a given machine-type). Ensure that scopes include storage read/write and the GCE SA has access to the bucket.
     ```
     gcloud compute instances create gcs-client \
-    --machine-type=e2-medium \
+    --machine-type=c3-highmem-4 \
     --project=$PROJECT \
     --zone=$ZONE \
     --shielded-secure-boot \
@@ -41,7 +41,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     ```
 ### Configure test VM
 
-1. SSH into the VM
+1. SSH into the VM ([configure IAP](https://cloud.google.com/compute/docs/connect/ssh-using-iap) if required)
     ```
     gcloud compute ssh gcs-client --zone $ZONE --tunnel-through-iap --project=$PROJECT
     ```
@@ -52,7 +52,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     ```
 1. Clone git repo and change into directory
     ```
-    git clone
+    git clone https://github.com/dutchiechris/storage.git
     cd storage/gcs/gcs-bench-single
     ```
 1. Configure Python environment
@@ -72,8 +72,8 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     # Create a 1g test file with dummy data
     openssl rand -out /ramdisk/file.1g 1073741824
 
-    # For larger tests. make it 40G
-    for i in {1..40}; do cat /ramdisk/file.40g >> /ramdisk/bigfile ; done
+    # For larger tests. make it 20G (or larger, just make sure you have enough RAM)
+    for i in {1..20}; do cat /ramdisk/file.1g >> /ramdisk/file.20g ; done
     ```
 1. Create a `.env` file in the same directory as the script which includes the following (ACCESS_KEY and SECRET_KEY are only needed for aws boto3 tests):
     ```
