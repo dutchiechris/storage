@@ -64,7 +64,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
 1. Create a ramdisk (optional) as a source and destination for transfers
     ```
     sudo mkdir /ramdisk
-    sudo mount -t tmpfs -o size=2G tmpfs /ramdisk
+    sudo mount -t tmpfs -o size=25G tmpfs /ramdisk
     sudo chmod 777 /ramdisk
     ```
 1. Create a test file
@@ -72,7 +72,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     # Create a 1g test file with dummy data
     openssl rand -out /ramdisk/file.1g 1073741824
 
-    # For larger tests. make it 20G (or larger, just make sure you have enough RAM)
+    # For larger tests. make it 20G (or larger, just make sure you have enough RAM, and sized the ramdisk larger)
     for i in {1..20}; do cat /ramdisk/file.1g >> /ramdisk/file.20g ; done
     ```
 1. Create a `.env` file in the same directory as the script which includes the following (ACCESS_KEY and SECRET_KEY are only needed for aws boto3 tests):
@@ -106,18 +106,18 @@ Optional parameters:
 --verbose #Verbose logging
 ```
 
-* Example to test upload using the sdk with 6 workers:
+* Example to upload using the sdk with 24 workers:
 ```
-(perf-test) sa_115019974160331027606@gcs-client1:~$ python3 gcs-bench-single.py --upload --sdk --verbose --workers=6
-local file=/ramdisk/file.1g, remote file=gs://202403-perftest/remote-file, file size=1024.0 MiB
-worker count=6, chunk size=25.00 MiB, total chunks=40.96
-Took 5.40 seconds. Average throughput: 189.78 MiB/s
+(.venv) sa_115019974160331027606@gcs-client-snow:~/storage/gcs/gcs-bench-single$ python3 gcs-bench-single.py --upload --sdk --verbose --workers=24
+local file=/ramdisk/file.20g, remote file=gs://2024050-snow/remote-file, file size=20480.0 MiB
+worker count=24, chunk size=25.00 MiB, total chunks=819.2
+Took 17.04 seconds. Average throughput: 1201.75 MiB/s
 ```
 
-* Example to download using the sdk to null with 4 workers and a 128 MB chunksize
+* Example to download using gcloud with defaults:
 ```
-(perf-test) sa_115019974160331027606@gcs-client1:~$ python3 gcs-bench-single.py --download --sdk --null --verbose --workers=4 --chunksize=128
-local file=/dev/null, remote file=gs://202403-perftest/remote-file, file size=1024.0 MiB
-worker count=4, chunk size=128.00 MiB, total chunks=8.0
-Took 4.16 seconds. Average throughput: 246.34 MiB/s
+(.venv) sa_115019974160331027606@gcs-client-snow:~/storage/gcs/gcs-bench-single$ python3 gcs-bench-single.py --download --gcloud --verbose
+local file=/ramdisk/file.20g, remote file=gs://2024050-snow/remote-file, file size=20480.0 MiB
+CompletedProcess(args=['gcloud', 'storage', 'cp', 'gs://2024050-snow/remote-file', '/ramdisk/file.20g'], returncode=0, stdout=b'', stderr=b'Copying gs://2024050-snow/remote-file to file:///ramdisk/file.20g\n  \n................................................................................................\n\nAverage throughput: 1.1GiB/s\n')
+Took 20.16 seconds. Average throughput: 1015.95 MiB/s
 ```
