@@ -79,14 +79,14 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     ```
     BUCKET_NAME="your-bucket-name"
     REMOTE_FILENAME="remote-file"
-    LOCAL_FILENAME="/ramdisk/file.1g"
+    LOCAL_FILENAME="/ramdisk/file.20g"
     ACCESS_KEY="GOOG1EC2AXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZ4U"
     SECRET_KEY="k6O62k6O62k6O62k6O62k6O62k6O62k6O62k6O62"
     ```
 
 ### Run tests!
 
-Run tests using: \
+Basic usage is:
 ```
 $ python3 gcs-bench-single.py
 usage: gcs-bench-single.py [-h] (--upload | --download) (--sdk | --gcloud | --aws) [--serial] [--null] [--chunksize CHUNKSIZE] [--workers WORKERS] [--verbose]
@@ -95,18 +95,18 @@ gcs-bench-single.py: error: one of the arguments --upload --download is required
 
 Required parameters:
 ```
---upload | --download #Direction of transfer
---sdk | --gcloud | --aws #Transfer tool
---serial # Force serialized transfers
+--upload | --download     # Direction of transfer
+--sdk | --gcloud | --aws  # Transfer tool
+--serial                  # Force serialized transfers
 ```
 Optional parameters:
 ```
---chunksize <# MB> #Set to the number of MBs per chunk to upload or download (or omit to use default)
---workers <#> #Set to the worker count (or omit to use default)
---verbose #Verbose logging
+--chunksize <# MB>        #Set to the number of MBs per chunk to upload or download (or omit to use default)
+--workers <#>             #Set to the worker count (or omit to use default)
+--verbose                 #Verbose logging
 ```
 
-* Example to upload using the sdk with 24 workers:
+Example to upload using the sdk with 24 workers:
 ```
 (.venv) sa_115019974160331027606@gcs-client-snow:~/storage/gcs/gcs-bench-single$ python3 gcs-bench-single.py --upload --sdk --verbose --workers=24
 local file=/ramdisk/file.20g, remote file=gs://2024050-snow/remote-file, file size=20480.0 MiB
@@ -114,7 +114,7 @@ worker count=24, chunk size=25.00 MiB, total chunks=819.2
 Took 17.04 seconds. Average throughput: 1201.75 MiB/s
 ```
 
-* Example to download using gcloud with defaults:
+Example to download using gcloud with defaults:
 ```
 (.venv) sa_115019974160331027606@gcs-client-snow:~/storage/gcs/gcs-bench-single$ python3 gcs-bench-single.py --download --gcloud --verbose
 local file=/ramdisk/file.20g, remote file=gs://2024050-snow/remote-file, file size=20480.0 MiB
