@@ -1,0 +1,3 @@
+google-cloud-storage
+boto3
+python-dotenv
