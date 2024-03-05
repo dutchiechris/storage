@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 Purpose: Script for testing upload and download performance of large files
          using [Python SDK | gcloud storage cp | Python boto3] using parallel

@@ -1,6 +1,6 @@
 # gcs-bench-single
 
-## Purpose: 
+## Purposegit
 Script for testing upload and download performance of large files.  You can pick the transfer tool (Python SDK, `gcloud storage cp`, or Python aws boto3) and parallelization parameters. Created while evaluating GCS performance as part of the [High throughput file transfers with Google Cloud Storage (GCS)](https://www.beginswithdata.com/2024/02/01/google-cloud-storage-max-throughput/) blog post.
 
 ## Setup instructions
