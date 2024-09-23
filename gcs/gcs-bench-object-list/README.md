@@ -52,7 +52,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
 
 Basic usage is:
 ```
-$ python3 gcs-bench-object-list.py
+$ python3 gcs-bench-object-list.py --help
 usage: gcs-bench-object-list.py [-h] [--pagesize PAGESIZE] [--maxresults MAXRESULTS] [--location LOCATION] [--verbose]
 
 Test performance of the GCS objects.list API
@@ -68,13 +68,13 @@ options:
 
 Example to to test object list of 25,000 objects with a page size of 1,000 in the us multi-region:
 ```
-(.venv) sa_115@gcs-client:~$ python3 gcs-bench-object-list.py
+$ python3 gcs-bench-object-list.py
 Listed 25,000 objects in 1.98s with a list object throughput of 12,648 objects/s
 ```
 
 Example to to test object list of 10,000 objects with a page size of 5,000 in the eu multi-region with verbose details:
 ```
-(.venv) sa_115@gcs-client:~$ python3 gcs-bench-object-list.py --pagesize 5000 --location eu --maxresults=10000 --verbose
+$ python3 gcs-bench-object-list.py --pagesize 5000 --location eu --maxresults=10000 --verbose
 Using public bucket gcp-public-data-sentinel-2 in location EU
 Response 1 in 1.36s, Items in response: 5000
 Response 2 in 1.56s, Items in response: 5000
