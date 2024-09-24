@@ -1,4 +1,4 @@
-# gcs-bench-single
+# gcs-bench-object-list
 
 ## Purpose
 Script for testing object list performance using the Python storage Libraries against a public GCS bucket. Choose the bucket location (us, eu, or us-central1), page size, and max results. Created to test the impact of different page sizes, especially in cases where the client and bucket are not collocated.
