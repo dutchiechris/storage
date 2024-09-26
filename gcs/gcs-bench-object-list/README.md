@@ -80,7 +80,7 @@ Listed 25,000 objects in 1.98s with a list object throughput of 12,648 objects/s
 
 Test object list of 10,000 objects with a page size of 5,000 in the eu multi-region with verbose details:
 ```
-python3 gcs-bench-object-list.py --location=eu --maxresults=10000 --pagesize=5000 --verbose
+$ python3 gcs-bench-object-list.py --location=eu --maxresults=10000 --pagesize=5000 --verbose
 Using bucket gcp-public-data-sentinel-2 in location EU
 Response 1 in 0.28s, Items in response: 5000
 Response 2 in 0.35s, Items in response: 5000
