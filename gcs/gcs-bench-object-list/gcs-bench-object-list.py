@@ -11,17 +11,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test performance of the GCS objects.list API")
     parser.add_argument('--pagesize', type=int, default=1000, help='Page size for object listing (default: 1000)')
     parser.add_argument('--maxresults', type=int, default=25000, help='Max results for object listing (default: 25000)')
-    parser.add_argument('--location', type=str, default='us', help='Location of bucket, one of: us, eu, us-central1 (default: us)')
+    group_bucket = parser.add_argument_group('Bucket or Location', 'Choose either a location (uses a public dataset bucket) or a specific bucket.')
+    ex_group_bucket = group_bucket.add_mutually_exclusive_group()
+    ex_group_bucket.add_argument('--location', type=str, default='us', choices=['us', 'eu', 'us-central1'], help='Public bucket location (default: us)')
+    ex_group_bucket.add_argument('--bucket', type=str, default=None, help='Specific bucket name')
     parser.add_argument('--verbose', action='store_true', help='Verbose output')
     args = parser.parse_args()
 
-    # Set Location
+    # Set bucket
     if args.location == 'us':
         BUCKET_NAME  = 'gcp-public-data-nexrad-l2'
     if args.location == 'eu':
         BUCKET_NAME  = 'gcp-public-data-sentinel-2'
     if args.location == 'us-central1':
         BUCKET_NAME  = 'gcp-public-data-arco-era5'
+    if args.bucket:
+        BUCKET_NAME = args.bucket
 
     # Execute and time operations
     page_count = 0
@@ -32,7 +37,7 @@ if __name__ == "__main__":
         bucket = storage_client.bucket(BUCKET_NAME)
         bucket.reload()
         if args.verbose:
-            print(f"Using public bucket {bucket.name} in location {bucket.location}")
+            print(f"Using bucket {bucket.name} in {bucket.data_locations or bucket.location}")
 
         blob_list = bucket.list_blobs(page_size=args.pagesize, max_results=args.maxresults, projection='noAcl')
 
@@ -51,7 +56,7 @@ if __name__ == "__main__":
             page_start_time = time.monotonic()
     except Exception as e:
         print(f"Error listing objects: {e}")
-        raise
+        exit(1)
 
     # Summary info
     total_time = time.monotonic() - total_start_time
