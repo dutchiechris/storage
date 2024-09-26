@@ -52,7 +52,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
 
 Help text:
 ```
-python3 gcs-bench-object-list.py --help
+$ python3 gcs-bench-object-list.py --help
 usage: gcs-bench-object-list.py [-h] [--pagesize PAGESIZE] [--maxresults MAXRESULTS] [--location {us,eu,us-central1} | --bucket BUCKET] [--verbose]
 
 Test performance of the GCS objects.list API
@@ -74,7 +74,7 @@ Bucket or Location:
 
 Test object list with defaults of 25,000 objects with a page size of 1,000 in the us multi-region:
 ```
-python3 gcs-bench-object-list.py
+$ python3 gcs-bench-object-list.py
 Listed 25,000 objects in 1.98s with a list object throughput of 12,648 objects/s
 ```
 
@@ -89,7 +89,7 @@ Listed 10,000 objects in 0.63s with a list object throughput of 15,751 objects/s
 
 Example to test object list of up to 10,000 objects from a bucket named `josefiene` with verbose details:
 ```
-python3 gcs-bench-object-list.py --bucket=josefiene --maxresults=10000 --verbose
+$ python3 gcs-bench-object-list.py --bucket=josefiene --maxresults=10000 --verbose
 Using bucket josefiene in ['EUROPE-WEST1', 'EUROPE-WEST4']
 Response 1 in 0.03s, Items in response: 35
 Listed 35 objects in 0.03s with a list object throughput of 1,076 objects/s
