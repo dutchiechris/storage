@@ -63,7 +63,7 @@ except ClientError as e:
 try:
     os.remove(local_object_key)
     s3.download_file(Bucket=BUCKET_NAME, Key=remote_object_key, Filename=local_object_key)
-    print(f"GET: 200 : OK")
+    print(f"GET: 200: OK")
 except ClientError as e:
     if 'Error' in e.response:
         error_code = e.response['Error']['Code']
@@ -102,7 +102,7 @@ except ClientError as e:
 try:
     os.remove(local_object_key)
     s3.download_file(Bucket=BUCKET_NAME, Key=remote_object_key, Filename=local_object_key, Config=TransferConfig(use_threads=True, multipart_threshold=10*1024*1024, max_concurrency=10, multipart_chunksize=10*1024*1024))
-    print(f"GET: 200 : OK")
+    print(f"GET: 200: OK")
 except ClientError as e:
     if 'Error' in e.response:
         error_code = e.response['Error']['Code']

@@ -1,9 +1,9 @@
 # gcs-aws-tools-compatibility
 
 ## Purpose
-Scripts for testing s3 sdk and aws cli interop with Google Cloud Storage (gcs), especially as it relates to default data integrity checks in AWS provided s3 tools. More on those updates is described in the AWS blog ["Introducing default data integrity protections for new objects in Amazon S3"](https://aws.amazon.com/blogs/aws/introducing-default-data-integrity-protections-for-new-objects-in-amazon-s3/). 
+Scripts for testing s3 sdk and aws cli interoperability with Google Cloud Storage (gcs), especially as it relates to default data integrity checks in AWS provided s3 tools. More on those updates is described in the AWS blog ["Introducing default data integrity protections for new objects in Amazon S3"](https://aws.amazon.com/blogs/aws/introducing-default-data-integrity-protections-for-new-objects-in-amazon-s3/). 
 
-For these tools to interoperate with GCS two settings need to be made, either via environemnt variables or aws cli or boto client config:
+For these AWS owned tools to interoperate with GCS two settings need to be made, either via environment variables or aws cli or boto client config:
 
 Environment variables:
 ```
@@ -11,16 +11,16 @@ AWS_REQUEST_CHECKSUM_CALCULATION='when_required'
 AWS_RESPONSE_CHECKSUM_VALIDATION='when_required'
 ```
 
-boto client config or aws cli profiles:
+boto client config or aws cli profile variables:
 ```
 request_checksum_calculation='when_required'
 response_checksum_validation='when_required'
 ```
 
-See more [here](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-envvars.html).
+Read more [about the AWS variables](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-envvars.html). Check the scripts for examples of how to set these variables in practice.
 
 ## Setup instructions
-These instructions assume a basic knowledge of Google Cloud. They can be executed from Google Cloud Shell or a temporary performance testing VM. They assume you have created a test bucket with access to a Service Account and have [created HMAC keys](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) for it.
+These instructions assume a basic knowledge of Google Cloud. They can be executed from Google Cloud Shell or a temporary performance testing VM. They assume you have created a test bucket with object read and write access granted to a Service Account and have [created HMAC keys](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) for it.
 
 1. Install required software
     ```
@@ -32,30 +32,30 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     git clone https://github.com/dutchiechris/storage.git
     cd storage/gcs/gcs-aws-tools-compatibility
     ```
-1. Configure Python environment (if intereted in boto3 python interop):
+1. If testing boto3: Configure Python environment:
     ```
     python3 -m venv .venv
     source .venv/bin/activate
     pip install -r requirements.txt
     ```
+1. If testing aws cli: [Install Docker](https://docs.docker.com/engine/install/)
 1. Export environment variables:
     ```
     export AWS_ACCESS_KEY_ID="<YOUR GCS HMAC ACCESS KEY>"
     export AWS_SECRET_ACCESS_KEY="<YOUR GCS HMAC SECRET KEY>"
-    export BUCKET_NAME="<YOUR BUCKET NAME>
+    export BUCKET_NAME="<YOUR BUCKET NAME>"
     ```
 
-### Run tests!
-
+## Run tests!
 Basic usage and output for the aws cli test is:
 ```
 (.venv)$ ./gcs-aws-boto3.py
 ## Using config parameters
 PUT: 200: OK
-GET: 200 : OK
+GET: 200: OK
 ## Using environment variables
 PUT: 200: OK
-GET: 200 : OK
+GET: 200: OK
 ```
 
 Basic usage and output for the aws cli test is:
