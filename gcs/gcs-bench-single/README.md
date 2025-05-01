@@ -75,13 +75,15 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     # For larger tests. make it 20G (or larger, just make sure you have enough RAM, and sized the ramdisk larger)
     for i in {1..20}; do cat /ramdisk/file.1g >> /ramdisk/file.20g ; done
     ```
-1. Create a `.env` file in the same directory as the script which includes the following (ACCESS_KEY and SECRET_KEY are only needed for aws boto3 tests):
+1. Create a `.env` file in the same directory as the script which includes the following (GCS_ENDPOINT_URL, GCS_REGION, ACCESS_KEY, SECRET_KEY are only needed for aws boto3 tests):
     ```
-    BUCKET_NAME="your-bucket-name"
+    BUCKET_NAME="<YOUR BUCKET NAME>"
     REMOTE_FILENAME="remote-file"
     LOCAL_FILENAME="/ramdisk/file.20g"
-    ACCESS_KEY="GOOG1EC2AXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZNOWAYAXZ4U"
-    SECRET_KEY="k6O62k6O62k6O62k6O62k6O62k6O62k6O62k6O62"
+    GCS_ENDPOINT_URL="https://storage.googleapis.com"
+    GCS_REGION="europe-west4"
+    ACCESS_KEY="<YOUR GCS HMAC ACCESS KEY>"
+    SECRET_KEY="<YOUR GCS HMAC SECRET KEY>"
     ```
 
 ### Run tests!
