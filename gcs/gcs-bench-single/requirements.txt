@@ -1,3 +1,3 @@
 google-cloud-storage
-boto3
+boto3 >= 1.36.0
 python-dotenv

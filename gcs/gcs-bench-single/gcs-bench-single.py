@@ -36,19 +36,27 @@ args = parser.parse_args()
 
 # Load variables from .env file
 load_dotenv() # Get environment variables from .env
-BUCKET_NAME     = os.environ.get("BUCKET_NAME")
-REMOTE_FILENAME = os.environ.get("REMOTE_FILENAME").lstrip('/')
-LOCAL_FILENAME  = os.environ.get("LOCAL_FILENAME")
-ACCESS_KEY      = os.environ.get("ACCESS_KEY") # Only required for boto3 tests; others use default application credentials
-SECRET_KEY      = os.environ.get("SECRET_KEY") # Only required for boto3 tests; others use default application credentials
-CHUNK_SIZE = args.chunksize * 1024 * 1024
+BUCKET_NAME      = os.environ.get("BUCKET_NAME")
+REMOTE_FILENAME  = os.environ.get("REMOTE_FILENAME").lstrip('/')
+LOCAL_FILENAME   = os.environ.get("LOCAL_FILENAME")
+ACCESS_KEY       = os.environ.get("ACCESS_KEY") # Only required for boto3 tests; others use default application credentials
+SECRET_KEY       = os.environ.get("SECRET_KEY") # Only required for boto3 tests; others use default application credentials
+GCS_ENDPOINT_URL = os.environ.get("GCS_ENDPOINT_URL") or "https://storage.googleapis.com" # Only required for boto3 tests
+GCS_REGION       = os.environ.get("GCS_REGION") or "europe-west4" # Only required for boto3 tests
+
+# Set variables
+MB = 1024 * 1024
+CHUNK_SIZE = args.chunksize * MB
 WORKER_COUNT = args.workers
 
 # Perform fixed calcs
-file_size_mb = os.path.getsize(LOCAL_FILENAME) / (1024 * 1024)
-chunk_size_mb = CHUNK_SIZE / (1024 * 1024)
+file_size_mb = os.path.getsize(LOCAL_FILENAME) / MB
+chunk_size_mb = CHUNK_SIZE / MB
 num_chunks = file_size_mb / chunk_size_mb
 
+if not all([BUCKET_NAME, REMOTE_FILENAME, LOCAL_FILENAME]):
+    print("Error: BUCKET_NAME, REMOTE_FILENAME, LOCAL_FILENAME must be set in .env or environment.")
+    exit()
 
 # Offer downloads to null because writing to a ramdisk takes time
 if args.null:
@@ -61,9 +69,9 @@ if args.sdk:
     remote_blob = bucket.blob(REMOTE_FILENAME)
 
 if args.aws:
-    session = Session(aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name="europe-west4")
+    session = Session(aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=GCS_REGION)
     session.events.unregister('before-parameter-build.s3.ListObjects', set_list_objects_encoding_type_url)
-    s3 = session.resource('s3', endpoint_url='https://storage.googleapis.com', config=Config(signature_version='s3v4'))
+    s3 = session.resource('s3', endpoint_url=GCS_ENDPOINT_URL, config=Config(signature_version='s3v4', request_checksum_calculation='when_required', response_checksum_validation='when_required' ))
     tconfig = TransferConfig(multipart_threshold=CHUNK_SIZE, max_concurrency=WORKER_COUNT, multipart_chunksize=CHUNK_SIZE, use_threads=True)
 
 if args.verbose:
@@ -118,6 +126,7 @@ if args.aws:
     if args.upload:
         s3.Object(bucket_name=BUCKET_NAME, key=REMOTE_FILENAME).upload_file(Filename=LOCAL_FILENAME, Config=tconfig)
     if args.download:
+        os.rm(LOCAL_FILENAME)
         s3.Object(bucket_name=BUCKET_NAME, key=REMOTE_FILENAME).download_file(Filename=LOCAL_FILENAME, Config=tconfig)
 
 
