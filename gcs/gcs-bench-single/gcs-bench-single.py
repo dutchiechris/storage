@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Purpose: Script for testing upload and download performance of large files
          using [Python SDK | gcloud storage cp | Python boto3] using parallel
@@ -126,7 +127,7 @@ if args.aws:
     if args.upload:
         s3.Object(bucket_name=BUCKET_NAME, key=REMOTE_FILENAME).upload_file(Filename=LOCAL_FILENAME, Config=tconfig)
     if args.download:
-        os.rm(LOCAL_FILENAME)
+        os.remove(LOCAL_FILENAME)
         s3.Object(bucket_name=BUCKET_NAME, key=REMOTE_FILENAME).download_file(Filename=LOCAL_FILENAME, Config=tconfig)
 
 
