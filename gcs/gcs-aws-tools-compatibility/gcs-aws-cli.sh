@@ -4,7 +4,7 @@
 # Notes:   awscli <=2.22.35 is compatible without extra checksum config
 #          awscli >=2.23.0 <=2.23.4 is incompatible
 #          awscli >=2.23.5 is compatible with checksum config
-# Blog:    tbd
+# Blog:    https://www.beginswithdata.com/2025/05/14/aws-s3-tools-with-gcs/
 # Author:  Chris Madden
 
 ## Export variables in your environment!
