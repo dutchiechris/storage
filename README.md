@@ -2,5 +2,7 @@
 This repository contains code samples and other resources related to storage topics.
 
 ## [Google Cloud Storage resources](gcs/) ##
-The directory [gcs](gcs/) contains resources relating to Google Cloud Storage
+The directory [gcs](gcs/) contains resources relating to Google Cloud Storage.
 
+## [Google Cloud Hyperdisk and Persistent Disk resources](disk/) ##
+The directory [disk](disk/) contains resources relating to Google Cloud Compute Engine Hyperdisk and Perisstent Disk.

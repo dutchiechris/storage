@@ -1,2 +1,6 @@
 # Local environment
 .env
+.venv/
+# Cache directories
+.cache/
+.cache-max/

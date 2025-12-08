@@ -1,0 +1,4 @@
+# List of disks you want to include for analysis / inclusion in the storage pool
+sg1-1
+sg1-2
+sg1-3
