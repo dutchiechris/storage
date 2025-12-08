@@ -7,7 +7,7 @@ A script designed to analyze historical disk I/O performance (IOPs and throughpu
 These instructions assume a basic knowledge of Google Cloud. They can be executed from Google Cloud Shell.
 
 ### Authenication
-1.  The script uses **Application Default Credentials (ADC)** with the Cloud Monitoring API. Ensure your environment is authenticated using one of the methods decribed at [How Application Default Credentials works](https://docs.cloud.google.com/docs/authentication/application-default-credentials).
+1.  The script uses **Application Default Credentials (ADC)** with the Cloud Monitoring API. Ensure your environment is authenticated using one of the methods described at [How Application Default Credentials works](https://docs.cloud.google.com/docs/authentication/application-default-credentials).
 
 1. The authenticated account requires the `roles/monitoring.viewer` (Monitoring Viewer) IAM role on the target project to query time series data.
 
