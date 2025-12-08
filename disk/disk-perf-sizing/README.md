@@ -1,7 +1,7 @@
 # disk-perf-sizing
 
 ## Purpose
-A script designed to analyze historical disk I/O performance (IOPs and throughput) from Cloud Monitoring. It generates essential summary statistics used to accurately determine and set the optimal provisioned performance for Google Cloud Hyperdisks and Advanced Hyperdisk Storage Pools.
+A script designed to analyze historical disk I/O performance (IOPs and throughput) from Cloud Monitoring. It generates essential summary statistics used to accurately determine and set the optimal provisioned performance for Google Cloud Hyperdisks and Advanced Hyperdisk Storage Pools. Datapoints are also saved in `.cache` and `.cache-max` subdirectories to speed up analysis, reduce API calls, and allow other analytics to be performed.
 
 ## Setup instructions
 These instructions assume a basic knowledge of Google Cloud. They can be executed from Google Cloud Shell.
@@ -54,7 +54,7 @@ options:
 
 Example collection of metrics for project `my-project` from the last `4` days where disk name matches `sg1-` with output in CSV format saved to file `sg1.csv`:
 ```
-$ ./disk-perf-sizing.py --project=sole-tenant-kl --days=4 --disk-filter-regex="sg1\-" --csv-output=sg1.csv
+$ ./disk-perf-sizing.py --project=my-project --days=4 --disk-filter-regex="sg1\-" --csv-output=sg1.csv
 >>> Using AVERAGE Rate Mode (Saving to .cache)
 Authenticating with Application Default Credentials...
 [IOPS] No cache found. Initializing...
