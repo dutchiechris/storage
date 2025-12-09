@@ -37,7 +37,7 @@ Help text:
 $ ./disk-perf-sizing.py --help
 usage: disk-perf-sizing.py [-h] --project PROJECT_ID [--days DAYS] [--max] [--csv-output CSV_OUTPUT] [--disk-filter-file DISK_FILTER_FILE | --disk-filter-regex DISK_FILTER_REGEX]
 
-Estimate Hyperdisk Balanced configuration (Cached/Incremental).
+Summarize Google Cloud Disk IOPs and Throughput to aid in determining appropriate provisioned performance for Hyperdisks and Advanced Hyperdisk Storage Pools.
 
 options:
   -h, --help            show this help message and exit

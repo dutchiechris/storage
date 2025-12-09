@@ -375,7 +375,7 @@ def load_time_series_data(project_id, lookback_days, cache_root):
     return data
 
 def main():
-    parser = argparse.ArgumentParser(description="Estimate Hyperdisk Balanced configuration (Cached/Incremental).")
+    parser = argparse.ArgumentParser(description="Summarize Google Cloud Disk IOPs and Throughput to aid in determining appropriate provisioned performance for Hyperdisks and Advanced Hyperdisk Storage Pools.")
     parser.add_argument("--project", required=True, dest="project_id", help="Your Google Cloud Project ID")
     parser.add_argument("--days", type=int, default=42, help="Full days (0-24h) prior to today to include. 0=Today only. (default: 42)")
     parser.add_argument("--max", action="store_true", help="Use max_* metrics for peak estimation instead of average rates.")
