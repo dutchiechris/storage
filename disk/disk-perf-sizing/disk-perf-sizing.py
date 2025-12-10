@@ -29,8 +29,8 @@ MAX_CACHE_DIR = ".cache-max"
 DATE_FMT = "%Y-%m-%d"
 TIME_FMT = "%Y-%m-%d %H:%M:%S"
 # API Limit is 100,000 points per series.
-# 30 days * 1440 mins = 43,200 points (Safe buffer).
-BATCH_DAYS = 30
+# 7 days should be a resonable default even for large environments. Reduce further if you encounter 503 timeouts.
+BATCH_DAYS = 7
 
 def ceil_round(value, step):
     """Rounds a value UP to the nearest step (e.g., nearest 100)."""
