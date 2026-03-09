@@ -31,7 +31,7 @@ The script requires the following utilities to be installed on your system:
 1. Install required software:
     ```
     sudo apt-get update
-    sudo apt-get install parallel coreutils gawk bc git
+    sudo apt-get install -y parallel coreutils gawk bc git bmon
     ```
 1. Clone git repo and change into directory
     ```
@@ -84,6 +84,7 @@ This command will cause a 10 GiB `output.dat` file to be created. On a 4 vCPU VM
 This command will discover the filesize of `input.dat` and then copy it to `output.dat`. With a 24 GiB `input.dat` file, the utility will repeatedly create 8 `dd` processes that run concurrently, where each writes 256 MiB to a different offset of `output.dat`. If the VM had 16 vCPUs, you will use at most half of the CPU resources.
 
 ## Example outputs
+> TIP: Run the bandwidth monitoring `bmon` in a second terminal to view realtime network usage.
 
 Test writes with random data:
 ```
@@ -224,3 +225,12 @@ Duration:      23.0056s
 Avg Speed:     445.11 MiB/s
 ```
 
+While loop to verify consistency across test runs:
+```
+# while true; do ./pcp.sh --size-gib 16 --of /flex/file.dat | grep Avg; done
+Avg Speed:     1256.52 MiB/s
+Avg Speed:     1265.69 MiB/s
+Avg Speed:     1248.40 MiB/s
+Avg Speed:     1254.31 MiB/s
+Avg Speed:     1241.76 MiB/s
+```
