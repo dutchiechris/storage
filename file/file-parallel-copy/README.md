@@ -7,7 +7,7 @@
 The utility provides:
 * Parallel Execution: Distributes copy tasks across multiple processes.
 * Direct I/O: Uses `oflag=direct` for writes and `iflag=direct` for reads to bypass host buffer cache.
-* Real or Simulated Data: Supports both physical file copying (--if) and random data generation (--size-gib).
+* Real or Simulated Data: Supports both physical file copying (`--if`) and random data generation (`--size-gib`).
 * Precise Data Handling: Manages "trailing bytes" to ensure the destination file matches the source size exactly, down to the byte.
 * Configurable Task Count: Fine-tune performance by adjusting the number of concurrent tasks and the amount of data processed per task.
 
