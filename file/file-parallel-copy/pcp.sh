@@ -14,27 +14,32 @@ BS=$((1024 * 1024)) # 1 MiB base block size
 
 # --- Usage Function ---
 usage() {
-    echo "Usage: $0 [--if <input_file> | --size-gib <GiB>] --of <output_file> [options]"
+    echo "Usage: $0 [--if=<input_file> | --size-gib=<GiB>] --of=<output_file> [options]"
     echo ""
     echo "Mandatory:"
-    echo "  --of              Path to the destination file."
-    echo "  --if              Path to source file (mutually exclusive with --size-gib)."
+    echo "  --of=<path>              Path to the destination file."
+    echo "  --if=<path>              Path to source file (mutually exclusive with --size-gib)."
     echo "  OR"
-    echo "  --size-gib        Generate random data of this size in GiB (mutually exclusive with --if)."
+    echo "  --size-gib=<GiB>         Generate random data of this size in GiB (mutually exclusive with --if)."
     echo ""
     echo "Options:"
-    echo "  --processes       Number of active parallel processes (defaults to CPU count: $PROCESS_COUNT)."
-    echo "  --task-size-mib   Amount of data (in MiB) per task (defaults to file size / processes)."
+    echo "  --processes=<count>      Number of active parallel processes (defaults to CPU count: $PROCESS_COUNT)."
+    echo "  --task-size-mib=<MiB>    Amount of data (in MiB) per task (defaults to file size / processes)."
     exit 1
 }
 
 # --- Parse Arguments ---
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --if=*) SOURCE="${1#*=}"; shift 1 ;;
         --if) SOURCE="$2"; shift 2 ;;
+        --of=*) DEST="${1#*=}"; shift 1 ;;
         --of) DEST="$2"; shift 2 ;;
+        --size-gib=*) SIZE_GB="${1#*=}"; shift 1 ;;
         --size-gib) SIZE_GB="$2"; shift 2 ;;
+        --processes=*) PROCESS_COUNT="${1#*=}"; shift 1 ;;
         --processes) PROCESS_COUNT="$2"; shift 2 ;;
+        --task-size-mib=*) TASK_SIZE_MIB="${1#*=}"; shift 1 ;;
         --task-size-mib) TASK_SIZE_MIB="$2"; shift 2 ;;
         *) usage ;;
     esac
@@ -129,7 +134,13 @@ OFLAG_ARG="oflag=direct"
 # /dev/null does not support O_DIRECT
 [[ "$DEST" == "/dev/null" ]] && OFLAG_ARG=""
 
-export SOURCE DEST BS BLOCKS_PER_TASK TOTAL_TASKS TOTAL_FULL_BLOCKS TRAILING_BYTES TOTAL_SIZE_BYTES MODE OFLAG_ARG
+IFLAG_ARG="iflag=direct"
+# Disable iflag=direct when reading from our temporary seed file in tmpfs
+if [[ "$MODE" == "Random Data Generation" ]]; then
+    IFLAG_ARG=""
+fi
+
+export SOURCE DEST BS BLOCKS_PER_TASK TOTAL_TASKS TOTAL_FULL_BLOCKS TRAILING_BYTES TOTAL_SIZE_BYTES MODE OFLAG_ARG IFLAG_ARG
 
 START_TIME=$(date +%s.%N)
 seq 0 $((TOTAL_TASKS - 1)) | parallel -j "$PROCESS_COUNT" --halt now,fail=1 '
@@ -146,7 +157,7 @@ seq 0 $((TOTAL_TASKS - 1)) | parallel -j "$PROCESS_COUNT" --halt now,fail=1 '
         else
             COUNT=$BLOCKS_PER_TASK
         fi
-        dd if="$SOURCE" of="$DEST" bs=$BS count=$COUNT seek=$OFFSET_BLOCKS $SKIP_ARG conv=notrunc $OFLAG_ARG status=none
+        dd if="$SOURCE" of="$DEST" bs=$BS count=$COUNT seek=$OFFSET_BLOCKS $SKIP_ARG conv=notrunc $IFLAG_ARG $OFLAG_ARG status=none
     fi
 
     if [ {1} -eq $((TOTAL_TASKS - 1)) ] && [ "$TRAILING_BYTES" -gt 0 ]; then
@@ -154,7 +165,7 @@ seq 0 $((TOTAL_TASKS - 1)) | parallel -j "$PROCESS_COUNT" --halt now,fail=1 '
         if [ "$MODE" == "File Copy" ]; then
             BYTE_SKIP_ARG="skip=$(( TOTAL_FULL_BLOCKS * BS ))"
         fi
-        dd if="$SOURCE" of="$DEST" bs=1 count=$TRAILING_BYTES seek=$(( TOTAL_FULL_BLOCKS * BS )) $BYTE_SKIP_ARG conv=notrunc $OFLAG_ARG status=none
+        dd if="$SOURCE" of="$DEST" bs=1 count=$TRAILING_BYTES seek=$(( TOTAL_FULL_BLOCKS * BS )) $BYTE_SKIP_ARG conv=notrunc $IFLAG_ARG $OFLAG_ARG status=none
     fi
 '
 END_TIME=$(date +%s.%N)

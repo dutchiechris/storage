@@ -6,7 +6,7 @@
 ## Features
 The utility provides:
 * Parallel Execution: Distributes copy tasks across multiple processes.
-* Direct I/O: Uses `oflag=direct` for writes to bypass host write buffer cache.
+* Direct I/O: Uses `oflag=direct` for writes and `iflag=direct` for file reads to bypass host buffer cache.
 * Real or Simulated Data: Supports both physical file copying (--if) and random data generation (--size-gib).
 * Precise Data Handling: Manages "trailing bytes" to ensure the destination file matches the source size exactly, down to the byte.
 * Configurable Task Count: Fine-tune performance by adjusting the number of concurrent tasks and the amount of data processed per task.
@@ -44,42 +44,42 @@ The script requires the following utilities to be installed on your system:
 Help text:
 ```
 ./pcp.sh --help
-Usage: ./pcp.sh [--if <input_file> | --size-gib <GiB>] --of <output_file> [options]
+Usage: ./pcp.sh [--if=<input_file> | --size-gib=<GiB>] --of=<output_file> [options]
 
 Mandatory:
-  --of              Path to the destination file.
-  --if              Path to source file (mutually exclusive with --size-gib).
+  --of=<path>              Path to the destination file.
+  --if=<path>              Path to source file (mutually exclusive with --size-gib).
   OR
-  --size-gib        Generate random data of this size in GiB (mutually exclusive with --if).
+  --size-gib=<GiB>         Generate random data of this size in GiB (mutually exclusive with --if).
 
 Options:
-  --processes       Number of active parallel processes (defaults to CPU count: #).
-  --task-size-mib   Amount of data (in MiB) per task (defaults to file size / processes).
+  --processes=<count>      Number of active parallel processes (defaults to CPU count: 288).
+  --task-size-mib=<MiB>    Amount of data (in MiB) per task (defaults to file size / processes).
 ```
 
 ### Write test using random data
 Generates random data to avoid any delays from data reads from a source storage system.
 ```
-./pcp.sh --size-gib 10 --of /path/to/output.dat
+./pcp.sh --size-gib=10 --of=/path/to/output.dat
 ```
 This command will cause a 10 GiB `output.dat` file to be created. On a 4 vCPU VM the utility will create 4 `dd` processes that run concurrently where each writes 2.5 GiB to a different offset of `output.dat`.
 
 ### Write test using a source file
 Useful to test write throughput with a specific file you want to copy. May introduce delays from data reads from a source storage system.
 ```
-./pcp.sh --if /path/to/input.dat --of /path/to/output.dat
+./pcp.sh --if=/path/to/input.dat --of=/path/to/output.dat
 ```
 This command will discover the filesize of `input.dat` and then copy it to `output.dat`. On a 4 vCPU VM, with a 8 GiB `input.dat` file, the utility will create 4 `dd` processes that run concurrently where each writes 2 GiB to a different offset of `output.dat`.
 
 ### Write test with a specific task size using random data
 ```
-./pcp.sh --size-gib 10 --of /path/to/output.dat --task-size-mib 256 
+./pcp.sh --size-gib=10 --of=/path/to/output.dat --task-size-mib=256 
 ```
 This command will cause a 10 GiB `output.dat` file to be created. On a 4 vCPU VM the utility will repeately create 4 `dd` processes that run concurrently where each writes 256 MiB to a different offset of `output.dat`. Using a smaller task size might be of interest to test flush or sync behavior.
 
 ### Write test with specific task and process count using a source file
 ```
-./pcp.sh --if /path/to/input.dat --of /path/to/output.dat --task-size-mib 256 --processes 8 
+./pcp.sh --if=/path/to/input.dat --of=/path/to/output.dat --task-size-mib=256 --processes=8 
 ```
 This command will discover the filesize of `input.dat` and then copy it to `output.dat`. With a 24 GiB `input.dat` file, the utility will repeatedly create 8 `dd` processes that run concurrently, where each writes 256 MiB to a different offset of `output.dat`. If the VM had 16 vCPUs, you will use at most half of the CPU resources.
 
@@ -88,7 +88,7 @@ This command will discover the filesize of `input.dat` and then copy it to `outp
 
 Test writes with random data:
 ```
-# ./pcp.sh --size-gib 10 --of /flex/file.dat
+# ./pcp.sh --size-gib=10 --of=/flex/file.dat
 Generating 320 MiB random seed file in /dev/shm...
 -------------------------------------
 Mode:             Random Data Generation
@@ -109,7 +109,7 @@ Test writes with a source file that you created on a ramdisk:
 # sudo mount -t tmpfs -o size=20G tmpfs /ramdisk
 # sudo chmod 777 /ramdisk
 
-# ./pcp.sh --of /ramdisk/file.dat --size-gib 10
+# ./pcp.sh --of=/ramdisk/file.dat --size-gib=10
 Generating 320 MiB random seed file in /dev/shm...
 -------------------------------------
 Mode:             Random Data Generation
@@ -123,7 +123,7 @@ Duration:      4.00912s
 Avg Speed:     2554.18 MiB/s
 -------------------------------------
 
-# ./pcp.sh --if /ramdisk/file.dat --of /flex/file.dat
+# ./pcp.sh --if=/ramdisk/file.dat --of=/flex/file.dat
 -------------------------------------
 Mode:             File Copy
 Total Size:       10737418240 bytes (10.00 GiB)
@@ -139,7 +139,7 @@ Avg Speed:     1266.27 MiB/s
 
 Test writes with a smaller process count:
 ```
-# ./pcp.sh --of /flex/file.dat --size-gib 10 --processes 5
+# ./pcp.sh --of=/flex/file.dat --size-gib=10 --processes=5
 Generating 1024 MiB random seed file in /dev/shm...
 -------------------------------------
 Mode:             Random Data Generation
@@ -156,7 +156,7 @@ Avg Speed:     715.62 MiB/s
 
 Test writes with a smaller task size:
 ```
- ./pcp.sh --of /flex/file.dat --size-gib 10 --task-size-mib 64
+ ./pcp.sh --of=/flex/file.dat --size-gib=10 --task-size-mib=64
 Generating 64 MiB random seed file in /dev/shm...
 -------------------------------------
 Mode:             Random Data Generation
@@ -173,7 +173,7 @@ Avg Speed:     1264.87 MiB/s
 
 Test single threaded writes:
 ```
-# ./pcp.sh  --of /flex/file.dat --size-gib 10 --processes 1
+# ./pcp.sh  --of=/flex/file.dat --size-gib=10 --processes=1
 Generating 1024 MiB random seed file in /dev/shm...
 -------------------------------------
 Mode:             Random Data Generation
@@ -188,12 +188,9 @@ Avg Speed:     214.89 MiB/s
 -------------------------------------
 ```
 
-Test parallel reads to `/dev/null` after dropping read caches:
+Test parallel reads to `/dev/null`:
 ```
-# echo 3 | sudo tee /proc/sys/vm/drop_caches
-3
-
-# ./pcp.sh  --if /flex/file.dat --of /dev/null
+# ./pcp.sh  --if=/flex/file.dat --of=/dev/null
 -------------------------------------
 Mode:             File Copy
 Total Size:       10737418240 bytes (10.00 GiB)
@@ -207,12 +204,9 @@ Avg Speed:     3147.68 MiB/s
 -------------------------------------
 ```
 
-Test single threaded reads to `/dev/null` after dropping read caches:
+Test single threaded reads to `/dev/null`:
 ```
-# echo 3 | sudo tee /proc/sys/vm/drop_caches
-3
-
-# ./pcp.sh  --if /flex/file.dat --of /dev/null --processes 1
+# ./pcp.sh  --if=/flex/file.dat --of=/dev/null --processes=1
 -------------------------------------
 Mode:             File Copy
 Total Size:       10737418240 bytes (10.00 GiB)
@@ -227,7 +221,7 @@ Avg Speed:     445.11 MiB/s
 
 While loop to verify consistency across test runs:
 ```
-# while true; do ./pcp.sh --size-gib 16 --of /flex/file.dat | grep Avg; done
+# while true; do ./pcp.sh --size-gib=16 --of=/flex/file.dat | grep Avg; done
 Avg Speed:     1256.52 MiB/s
 Avg Speed:     1265.69 MiB/s
 Avg Speed:     1248.40 MiB/s
