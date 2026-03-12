@@ -1,7 +1,7 @@
 # file-parallel-copy
 
 ## Purpose
-`pcp.sh` is a bash utility designed to parallelize large file copy operations to characterize write performance of various storage targets. In contrast to a simple single-threaded `cp` command, this utility can copy data in a parallelized manner. It uses `parallel` and `dd` to slice a file and copy portions of it concurrently, enabling higher throughputs. Source file for copy can be provided, or a random seed file will be generated in memory (`/dev/shm`) to thwart storage level deduplication and compression without taxing the CPU to generate all of it. Keep in mind that when copying from a source file if data is not in Linux buffer cache already that data will be read from a source potentially impacting the performance of the copy job. This software is designed for performance testing and not production use. NO WARRANTY IMPLIED OR GIVEN.
+`pcp.sh` is a bash utility designed to parallelize large file copy operations to characterize read and write performance of various storage targets. In contrast to a simple single-threaded `cp` command, this utility can copy data in a parallelized manner. It uses `parallel` and `dd` to slice a file and copy portions of it concurrently, enabling higher throughputs. Source file for copy can be provided, or a random seed file will be generated in memory (`/dev/shm`) to thwart storage level deduplication and compression without taxing the CPU to generate all of it. This software is designed for performance testing and not production use. NO WARRANTY IMPLIED OR GIVEN.
 
 ## Features
 The utility provides:
@@ -13,7 +13,7 @@ The utility provides:
 
 ## How it Works
 1. Environment Check: Verifies all dependencies are installed.
-1. Planning: Logically Splits the file into chunks.
+1. Planning: Logically splits the file into chunks.
 1. Parallelization: Launches GNU Parallel, which spawns multiple dd instances.
 1. Seek & Skip: Each dd instance uses skip to read from a specific source offset and seek to write to the corresponding destination offset.
 1. Remainder Handling: The final task handles any remaining bytes that didn't fit into the 1 MiB block size using a byte-level copy.
@@ -219,7 +219,7 @@ Duration:      23.0056s
 Avg Speed:     445.11 MiB/s
 ```
 
-While loop to verify consistency across test runs:
+While loop to verify performance consistency across test runs:
 ```
 # while true; do ./pcp.sh --size-gib=16 --of=/flex/file.dat | grep Avg; done
 Avg Speed:     1256.52 MiB/s
