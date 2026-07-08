@@ -1,0 +1,3 @@
+obstore
+tqdm
+python-dotenv
