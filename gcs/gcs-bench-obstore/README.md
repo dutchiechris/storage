@@ -73,7 +73,7 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     openssl rand -out /ramdisk/1g.bin 1073741824
 
     # For larger tests. make it 20G (or larger, just make sure you have enough RAM, and sized the ramdisk larger)
-    for i in {1..35}; do cat /ramdisk/1g.bin >> /ramdisk/obstore.bin ; done
+    for i in {1..20}; do cat /ramdisk/1g.bin >> /ramdisk/obstore.bin ; done
     ```
 1. Create a `.env` file in the same directory as the script which includes the following:
     ```
