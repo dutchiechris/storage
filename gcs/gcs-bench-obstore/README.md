@@ -20,7 +20,9 @@ These instructions assume a basic knowledge of Google Cloud. They can be execute
     ```
 1. Create storage bucket
     ```
-    gcloud storage buckets create gs://$BUCKET --location=$REGION --project=$PROJECT --soft-delete-duration=0
+    gcloud storage buckets create gs://$BUCKET --location=$REGION --project=$PROJECT \
+    --soft-delete-duration=0 \
+    --enable-hierarchical-namespace --uniform-bucket-level-access
     ```
 1. Grant GCE Service Account (SA) access to bucket
     ```

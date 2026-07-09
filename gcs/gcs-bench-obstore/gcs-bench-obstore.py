@@ -143,12 +143,12 @@ async def download_file(store: GCSStore, remote_path: str, local_path: Path, chu
         if DOWNLOAD_TO_MEMORY_ONLY:
             print(f"Downloading: {remote_path} ({file_size / (1024**2):.2f} MB)...")
         else:
-            # Pre-allocate container file on target disk
-            local_path.parent.mkdir(parents=True, exist_ok=True)
             print(f"Downloading: {remote_path} ({file_size / (1024**2):.2f} MB) in parallel ranges...")
 
-            with open(local_path, "wb") as f:
-                f.truncate(file_size)
+    if not DOWNLOAD_TO_MEMORY_ONLY:
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(local_path, "wb") as f:
+            f.truncate(file_size)
 
     chunks = []
     offset = 0
